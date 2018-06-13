@@ -14,12 +14,15 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.WebUtils;
 
 import com.chaos.fission.frameworks.tool.file.ImageUploadTool;
 import com.chaos.fission.profile.ProfileForm;
@@ -40,6 +43,13 @@ public class ProfileController {
 	@ModelAttribute("picturePath")
 	public Resource picturePath() {
 		return imageUploadTool.getAnonymousPicture();
+	}
+	
+	@ExceptionHandler(IOException.class)
+	public ModelAndView	handleIOException(IOException exception) {
+		ModelAndView modelAndView = new ModelAndView("profile/uploadPage");
+		modelAndView.addObject("error", exception.getMessage());
+		return modelAndView;
 	}
 	
 	@RequestMapping("/profile")
@@ -92,5 +102,12 @@ public class ProfileController {
 	public void getUploadedPicture(HttpServletResponse response, @ModelAttribute("picturePath") Resource picturePath) throws IOException {
 		response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(picturePath.getFilename()));
 		IOUtils.copy(picturePath.getInputStream(), response.getOutputStream());
+	}
+	
+	@RequestMapping("profile/uploadError")
+	public ModelAndView onUploadError(HttpServletRequest request) {
+		ModelAndView modelAndView = new ModelAndView("profile/uploadPage");
+		modelAndView.addObject("error", request.getAttribute(WebUtils.ERROR_MESSAGE_ATTRIBUTE));
+		return modelAndView;
 	}
 }
