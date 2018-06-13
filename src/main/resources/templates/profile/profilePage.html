@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="layout/default">
+<head>
+	<title>Your profile</title>
+</head>
+<body>
+	<div class="row" layout:fragment="content">
+		<h2 class="indigo-text center">Personal Info</h2>
+		<form th:action="@{/profile}" th:object="${profileForm}"
+			method="post" class="col m8 s12 offset-m2">
+			<!-- 
+			<ul th:if="${#fields.hasErrors('*')}" class="errorlist">
+				<li th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
+			</ul>
+			-->
+			<div class="row">
+				<div class="input-field col s6">
+					<input th:field="${profileForm.twitterHandle}"
+						id="twitterHandle" type="text" th:errorclass="invalid"/>
+					<label for="twitterHandle">Last Name</label>
+					<div th:errors="*{twitterHandle}" class="red-text">Error</div>
+				</div>
+				<div class="input-field col s6">
+					<input th:field="${profileForm.email}"
+						id="email" type="text" th:errorclass="invalid"/>
+					<label for="email">Email</label>
+					<div th:errors="*{email}" class="red-text">Error</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s6">
+					<input th:field="${profileForm.birthDate}"
+						id="birthDate" type="text" th:placeholder="${dateFormat}" th:errorclass="invalid"/>
+					<label for="birthDate">Birth Date</label>
+					<div th:errors="*{birthDate}" class="red-text">Error</div>
+				</div>
+			</div>
+			<fieldset class="row">
+				<legend>What do you like?</legend>
+					<button class="btn teal" type="submit" name="addTaste">Add Taste
+					<i class="mdi-content-add left"></i>
+				</button><div th:errors="*{tastes}" class="red-text">Error</div>
+				<div class="row" th:each="row, rowStat : *{tastes}">
+					<div class="col s6">
+						<input type="text" th:field="*{tastes[__${rowStat.index}__]}"/>
+					</div>
+					<div class="col s6">
+						<button class="btn red" type="submit" name="removeTaste" th:value="${rowStat.index}">
+							Remove<i class="mdi-action-delete right waves-effect"></i>
+						</button>
+					</div>
+				</div>
+			</fieldset>
+			<div class="row s12">
+				<button class="btn waves-effect vaves-light" type="submit" name="save">
+					Submit<i class="mdi-content-send right"></i>
+				</button>
+			</div>
+		</form>
+	</div>
+	<script layout:fragment="script">
+		$('button').bind('click', function(e) {
+			if (e.currentTarget.name === 'save') {
+				$(e.currentTarget.form).removeAttr('novalidate');
+			} else {
+				$(e.currentTarget.form).attr('novalidate', 'novalidate')
+			}
+		});
+	</script>
+</body>
+</html>
