@@ -1,0 +1,21 @@
+upload:
+  rootPath: file:../upload
+  imagePath: file:../upload/images
+  anonymousPicture: classpath:/images/pkq.jpg
+  
+spring:
+  thymeleaf:
+    cache: false
+    
+  messages:
+    cache-seconds: 0
+    
+  mvc:
+    locale: en
+    
+  http:
+    multipart:
+      max-request-size: 10Mb
+      max-file-size: 5Mb
+
+#logging.level.org.springframework.web=debug
