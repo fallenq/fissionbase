@@ -26,6 +26,7 @@ import org.springframework.web.util.WebUtils;
 
 import com.chaos.fission.frameworks.tool.file.ImageUploadTool;
 import com.chaos.fission.profile.ProfileForm;
+import com.chaos.fission.profile.ProfileSession;
 import com.chaos.fission.profile.USLocalDateFormatter;
 
 @Controller
@@ -35,6 +36,9 @@ public class ProfileController {
 	@Autowired
 	private ImageUploadTool imageUploadTool;
 	
+	@Autowired
+	private ProfileSession profileSession;
+	
 	@ModelAttribute("dateFormat")
 	public String localeFormat(Locale locale) {
 		return USLocalDateFormatter.getPattern(locale);
@@ -43,6 +47,11 @@ public class ProfileController {
 	@ModelAttribute("picturePath")
 	public Resource picturePath() {
 		return imageUploadTool.getAnonymousPicture();
+	}
+	
+	@ModelAttribute
+	public ProfileForm getProfileForm() {
+		return profileSession.toForm();		
 	}
 	
 	@ExceptionHandler(IOException.class)
@@ -62,6 +71,7 @@ public class ProfileController {
 		if (bindingResult.hasErrors()) {
 			return "profile/profilePage";
 		}
+		profileSession.saveForm(profileForm);
 		System.out.println("save ok" + profileForm);
 		return "redirect:/profile";
 	}
