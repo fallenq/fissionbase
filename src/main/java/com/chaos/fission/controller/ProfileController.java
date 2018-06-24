@@ -12,7 +12,6 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -44,10 +43,10 @@ public class ProfileController {
 		return USLocalDateFormatter.getPattern(locale);
 	}
 	
-	@ModelAttribute("picturePath")
-	public Resource picturePath() {
-		return imageUploadTool.getAnonymousPicture();
-	}
+//	@ModelAttribute("picturePath")
+//	public Resource picturePath() {
+//		return imageUploadTool.getAnonymousPicture();
+//	}
 	
 	@ModelAttribute
 	public ProfileForm getProfileForm() {
@@ -56,8 +55,9 @@ public class ProfileController {
 	
 	@ExceptionHandler(IOException.class)
 	public ModelAndView	handleIOException(IOException exception) {
-		ModelAndView modelAndView = new ModelAndView("profile/uploadPage");
+		ModelAndView modelAndView = new ModelAndView("profile/profilePage");
 		modelAndView.addObject("error", exception.getMessage());
+		modelAndView.addObject("profileForm", profileSession.toForm());
 		return modelAndView;
 	}
 	
@@ -95,29 +95,32 @@ public class ProfileController {
 		return "profile/uploadPage";
 	}
 	
-	@RequestMapping(value="/profile/upload", method=RequestMethod.POST)
-	public String onUpload(MultipartFile file, RedirectAttributes redirectAttributes, Model model) throws IOException {
+	@RequestMapping(value="/profile", params={"upload"}, method=RequestMethod.POST)
+	public String onUpload(MultipartFile file, RedirectAttributes redirectAttributes) throws IOException {
 		if (file.isEmpty() || !imageUploadTool.fileTool.isImage(file)) {
 			redirectAttributes.addFlashAttribute("error", "Incorrect file.");
-			return "redirect:/profile/upload";
+			return "redirect:/profile";
 		}
 		Resource resource = imageUploadTool.singleImageStore(file);
-		if (resource != null) {
-			model.addAttribute("picturePath", resource);
-		}
-		return "profile/uploadPage";
+		profileSession.setPicturePath(resource);
+		return "redirect:profile";
 	}
 	
 	@RequestMapping(value="/profile/uploadedPicture")
-	public void getUploadedPicture(HttpServletResponse response, @ModelAttribute("picturePath") Resource picturePath) throws IOException {
+	public void getUploadedPicture(HttpServletResponse response) throws IOException {
+		Resource picturePath = profileSession.getPicturePath();
+		if (picturePath == null) {
+			picturePath = imageUploadTool.getAnonymousPicture();
+		}
 		response.setHeader("Content-Type", URLConnection.guessContentTypeFromName(picturePath.getFilename()));
 		IOUtils.copy(picturePath.getInputStream(), response.getOutputStream());
 	}
 	
 	@RequestMapping("profile/uploadError")
 	public ModelAndView onUploadError(HttpServletRequest request) {
-		ModelAndView modelAndView = new ModelAndView("profile/uploadPage");
+		ModelAndView modelAndView = new ModelAndView("profile/profilePage");
 		modelAndView.addObject("error", request.getAttribute(WebUtils.ERROR_MESSAGE_ATTRIBUTE));
+		modelAndView.addObject("profileForm", profileSession.toForm());
 		return modelAndView;
 	}
 }
