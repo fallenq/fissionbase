@@ -10,16 +10,20 @@ import org.springframework.format.Formatter;
 public class USLocalDateFormatter implements Formatter<LocalDate> {
 
 	public static final String US_PATTERN = "MM/dd/yyyy";
-	public static final String NORMAL_PATTERN = "dd/MM/yyyy";
+	public static final String NORMAL_PATTERN = "yyyy/MM/dd";
 
 	@Override
 	public String print(LocalDate object, Locale locale) {
-		return DateTimeFormatter.ofPattern(getPattern(locale)).format(object);
+		return getOfPattern(locale).format(object);
 	}
 
 	@Override
 	public LocalDate parse(String text, Locale locale) throws ParseException {
-		return LocalDate.parse(text, DateTimeFormatter.ofPattern(getPattern(locale)));
+		return LocalDate.parse(text, getOfPattern(locale));
+	}
+	
+	private DateTimeFormatter getOfPattern(Locale locale) {
+		return DateTimeFormatter.ofPattern(getPattern(locale));
 	}
 
 	public static String getPattern(Locale locale) {
