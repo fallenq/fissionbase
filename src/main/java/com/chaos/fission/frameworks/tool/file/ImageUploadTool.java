@@ -19,13 +19,11 @@ import com.chaos.fission.frameworks.tool.common.TimeTool;
 @Repository
 public class ImageUploadTool implements UploadNozzle {
 
+	@Autowired
 	public FileTool fileTool;
+	
 	@Autowired
 	private UploadPropertis uploadProperty;
-
-	public ImageUploadTool() {
-		fileTool = FileTool.getInstance();
-	}
 
 	public Resource singleImageStore(MultipartFile file) throws IOException {
 		String fileExt = fileTool.getFileExtension(file.getOriginalFilename());
@@ -34,9 +32,9 @@ public class ImageUploadTool implements UploadNozzle {
 		if (fileTool.createOrValidateDir(dirname)) {
 			Resource resource = fileTool.createRelativeResource(getUploadResource(), dirname);
 			File tempFile = File.createTempFile("pic", fileExt, resource.getFile());
-			try (InputStream input = file.getInputStream();OutputStream output = new FileOutputStream(tempFile)) {
+			try (InputStream input = file.getInputStream(); OutputStream output = new FileOutputStream(tempFile)) {
 				IOUtils.copy(input, output);
-				outFile = new FileSystemResource(tempFile); 
+				outFile = new FileSystemResource(tempFile);
 			}
 		}
 		return outFile;

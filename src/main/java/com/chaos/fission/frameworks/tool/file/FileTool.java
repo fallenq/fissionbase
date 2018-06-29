@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
+@Repository
 public class FileTool {
 
 	public static FileTool getInstance() {
