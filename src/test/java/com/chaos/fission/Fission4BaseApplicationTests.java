@@ -11,6 +11,7 @@ public class Fission4BaseApplicationTests {
 
 	@Test
 	public void contextLoads() {
+		System.out.println("hello");
 	}
 
 }
