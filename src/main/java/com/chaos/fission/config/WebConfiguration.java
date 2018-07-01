@@ -6,6 +6,7 @@ import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomi
 import org.springframework.boot.web.servlet.ErrorPage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.multipart.MultipartException;
@@ -49,12 +50,12 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 		return container -> container.addErrorPages(new ErrorPage(MultipartException.class, "/profile/uploadError"));
 	}
 	
-//	@Bean
-//	@Primary
-//	public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
-//		ObjectMapper objectMapper = builder.createXmlMapper(false).build();
-//		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-//		return objectMapper;
-//	}
+	@Bean
+	@Primary
+	public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
+		ObjectMapper objectMapper = builder.createXmlMapper(false).build();
+		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+		return objectMapper;
+	}
 	
 }
