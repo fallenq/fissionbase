@@ -12,9 +12,11 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.util.UrlPathHelper;
 
 import com.chaos.fission.profile.USLocalDateFormatter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,6 +58,17 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 		ObjectMapper objectMapper = builder.createXmlMapper(false).build();
 		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 		return objectMapper;
+	}
+	
+	@Override
+	public void configurePathMatch(PathMatchConfigurer configurer) {
+		// TODO Auto-generated method stub
+//		super.configurePathMatch(configurer);
+		UrlPathHelper urlPathHelper = new UrlPathHelper();
+		urlPathHelper.setRemoveSemicolonContent(false);
+		configurer.setUrlPathHelper(urlPathHelper);
+		configurer.setUseRegisteredSuffixPatternMatch(true);
+		
 	}
 	
 }
