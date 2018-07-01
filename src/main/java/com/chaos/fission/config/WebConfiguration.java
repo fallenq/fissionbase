@@ -62,7 +62,6 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 	
 	@Override
 	public void configurePathMatch(PathMatchConfigurer configurer) {
-		// TODO Auto-generated method stub
 //		super.configurePathMatch(configurer);
 		UrlPathHelper urlPathHelper = new UrlPathHelper();
 		urlPathHelper.setRemoveSemicolonContent(false);
